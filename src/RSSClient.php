@@ -16,6 +16,7 @@ use Craft;
 use craft\base\Plugin;
 use craft\services\Plugins;
 use craft\events\PluginEvent;
+use craft\web\twig\variables\CraftVariable;
 
 use yii\base\Event;
 
@@ -49,6 +50,16 @@ class RSSClient extends Plugin
             'rssfeed' => services\RSSFeedService::class,
         ]);
 
+        // add event hook to allow variable to appear in template
+        Event::on(
+            CraftVariable::class,
+            CraftVariable::EVENT_INIT,
+            function (Event $event) {
+                /** @var CraftVariable $variable */
+                $variable = $event->sender;
+                $variable->set('rssclient', RSSClientVariable::class);
+            }
+        );
 
     }
 
