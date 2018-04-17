@@ -46,13 +46,26 @@ class RSSFeedService extends Component
         }
     }
 
+    /**
+     * @param $host
+     * @param null $auth
+     * @return array|\Psr\Http\Message\StreamInterface
+     */
     private function dispatchRequest($host, $auth = null) {
         /** @var Client $client */
         $client = new Client();
-        $res = $client->request('GET', $host, [
-            'headers' => ['Accept' => ['application/rss+xml', 'application/rdf+xml', 'application/xml', 'text/xml']]
-        ]);
 
-        return $res->getBody();
+        try {
+
+            $res = $client->request('GET', $host, [
+                'https_errors' => false,
+                'headers' => ['Accept' => ['application/rss+xml', 'application/rdf+xml', 'application/xml', 'text/xml']]
+            ]);
+
+            return $res->getBody();
+        } catch (\Exception $e) {
+            return array();
+        }
+
     }
 }
